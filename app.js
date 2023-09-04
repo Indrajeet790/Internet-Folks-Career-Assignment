@@ -3,6 +3,9 @@ const app = express();
 const port = 8000;
 const db = require("./config/mongoose");
 require("dotenv").config();
+const passport=require("passport")
+const jsonWebToken=require("jsonwebtoken");
+const passportJwt=require("./config/passport-jwt")
 
 
 
