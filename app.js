@@ -6,7 +6,14 @@ require("dotenv").config();
 
 
 
-app.use(express.urlencoded());
+
+app.use(express.json());
+app.use(express.urlencoded({
+extended:true
+}));
+
+// routes
+app.use("/", require("./routes"));
 
 
 
