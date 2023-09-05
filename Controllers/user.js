@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken"); 
 const User = require("../Models/user");
+const bcrypt=require("../config/bcrypt")
+;
 
 // register a user
 module.exports.SignUp = async (req, res) => {
@@ -7,7 +9,15 @@ module.exports.SignUp = async (req, res) => {
     const user = await User.findOne({email:req.body.email});
 
     if (!user) {
-      const newUser = await User.create(req.body);
+        // Hash the user's password before storing it in the database
+        const hashedPassword = await bcrypt.hashPassword(req.body.password);
+      // Create a new user with the hashed password
+      const newUser = await User.create({
+        name:req.body.name,
+        email: req.body.email,
+        password: hashedPassword, // Store the hashed password
+      });
+      
       return res.status(200).json({ newUser });
     } else {
       return res.status(200).json({ message: "user is already exits" });
@@ -21,15 +31,20 @@ module.exports.SignUp = async (req, res) => {
 module.exports.SignIn = async (req, res) => {
   try {
     // Find a user in the database based on the provided email
-    const user = await User.findOne({ email: req.body.email }); // Add 'await' here
+    const user = await User.findOne({ email: req.body.email }); 
 
-    // Check if a user with the given email exists and if the provided password matches
-    if (!user || user.password !== req.body.password) {
-      return res.status(422).json({ message: "Invalid userName/password" });
+    // Check if a user with the given email exists
+    if (!user) {
+      return res.status(422).json({ message: "Invalid username/password" });
     }
 
-        // Generate a new JWT token with the user's data as the payload, a secret key "codeial",
-    // and set the token's expiration time to 1 day (24 hours)
+    // Verify the provided password with the hashed password stored in the database
+    const isPasswordMatch = await bcrypt.comparePasswords(req.body.password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(422).json({ message: "Invalid username/password" });
+    }
+  // Generate a new JWT token with the user's data as the payload, a secret key "mySecret",
     const token = jwt.sign(user.toJSON(), "mySecret", { expiresIn: "1d" });
 
     return res.status(200).json({
