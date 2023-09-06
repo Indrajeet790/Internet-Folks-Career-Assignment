@@ -4,8 +4,8 @@ const { Snowflake } = require('@theinternetfolks/snowflake');
 const userSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
-      default: Snowflake.generate, // Use Snowflake to generate a unique ID
+      type: mongoose.Schema.Types.ObjectId,
+      default: Snowflake.generate(), // Use Snowflake to generate a unique ID
       unique: true,
     },
       name: {

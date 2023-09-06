@@ -3,8 +3,8 @@ const { Snowflake } = require('@theinternetfolks/snowflake');
 
 const communitySchema = new mongoose.Schema({
   id: {
-    type: String,
-    default: Snowflake.generate,
+    type:mongoose.Schema.Types.String,
+    default: Snowflake.generate(),
     unique: true,
     required: true,
   },
@@ -17,9 +17,8 @@ const communitySchema = new mongoose.Schema({
     unique: true,
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId,    // Reference to the User model
+    type: mongoose.Schema.Types.String,
     ref: 'User',
-    type: String, // Assuming this is the User's Snowflake ID 
     required: true,
   },
   created_at: {

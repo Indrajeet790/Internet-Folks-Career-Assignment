@@ -13,7 +13,8 @@ passport.use(
   new JWTStrategy(opts, async function (JWTPayload, done) {
     try {
       // Find a user in the database based on the ID extracted from the JWT payload
-      const user = await User.findById(JWTPayload._id);
+      const user = await User.findById(JWTPayload.id, "-password");
+      console.log(">>>>>", user);
 
       if (user) {
         // If a user is found, pass the user data to the next middleware
