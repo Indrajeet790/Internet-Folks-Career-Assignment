@@ -1,24 +1,34 @@
 const jwt = require("jsonwebtoken");
 const User = require("../Models/user");
 const bcrypt = require("../config/bcrypt");
+const mongoose = require("mongoose");
 const { Snowflake } = require("@theinternetfolks/snowflake");
+
+const ObjectId = mongoose.Types.ObjectId; // Import ObjectId from mongoose
 // register a user
 module.exports.SignUp = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-         // Check if the provided password meets complexity requirements
-         const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
-         if (!passwordRegex.test(req.body.password)) {
-           return res.status(422).json({ message: "Password should have 1 upper case, lowercase letter along with a number and special character." });
-         }
-      // Hash the user's password before storing it in the database
+      // Check if the provided password meets complexity requirements
+      const passwordRegex =
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
+      if (!passwordRegex.test(req.body.password)) {
+        return res
+          .status(422)
+          .json({
+            message:
+              "Password should have 1 upper case, lowercase letter along with a number and special character.",
+          });
+      }
       const hashedPassword = await bcrypt.hashPassword(req.body.password);
 
       // Generate a unique user ID using Snowflake
-      const userId = Snowflake.generate();
-      // Create a new user with the hashed password
+      const userId = Snowflake.generate().toString();
+      console.log(userId);
+      // const userIdObjectId = new mongoose.Types.ObjectId(userId);
+      // console.log(">>>>>>>>>>>>",userIdObjectId);
       const newUser = await User.create({
         userId: userId,
         name: req.body.name,

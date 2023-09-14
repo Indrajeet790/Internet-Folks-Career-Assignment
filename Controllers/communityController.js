@@ -1,5 +1,7 @@
 const Community = require("../Models/community");
 const verifyToken = require("../config/verifyToken");
+const mongoose = require('mongoose');
+const User = require("../Models/user");
 
 // create community
 module.exports.createCommunity = async (req, res) => {
@@ -35,7 +37,7 @@ exports.getOwnCommunities = async (req, res) => {
       const totalCommunities = await Community.countDocuments({owner: checkToken.userId});
       const totalPages = Math.ceil(totalCommunities / perPage);
 
-      const communities = await Community.find({ owner: checkToken.userId })
+      const communities = await Community.find()
         .skip((page - 1) * perPage)
         .limit(perPage);
 
@@ -64,91 +66,52 @@ exports.getOwnCommunities = async (req, res) => {
   }
 };
 
+
 // get all community
 exports.getAllCommunity = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const perPage = parseInt(req.query.perPage) || 10;
-  
-        const totalCommunities = await Community.countDocuments();
-        const totalPages = Math.ceil(totalCommunities / perPage);
-  
-        const communities = await Community.find()
-          .populate('owner', 'useId name')
-          .skip((page - 1) * perPage)
-          .limit(perPage)
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = parseInt(req.query.perPage) || 10;
+    const totalCommunities = await Community.countDocuments();
+    const totalPages = Math.ceil(totalCommunities / perPage);
 
-        return res.status(200).json({
-          status: true,
-          content: {
-            meta: {
-              total: totalCommunities,
-              pages: totalPages,
-              page: page,
-            },
-            data: communities.map((community) => ({
-              id: community.id,
-              name: community.name,
-              slug: community.slug,
-              owner: community.owner,
-              created_at: community.created_at,
-              updated_at: community.updated_at,
-            })),
-          },
-        });
-      
-    } catch (error) {
-      console.error("Error fetching communities:", error);
-      return res.status(500).json({ message: "Internal Server Error" });
+    const communities = await Community.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    const populatedCommunities = [];
+    for (const community of communities) {
+      // Find the corresponding user based on the owner field in the community
+      const user = await User.findOne({ userId: community.owner });
+      populatedCommunities.push({
+        id: community.id,
+        name: community.name,
+        slug: community.slug,
+        owner: {
+          id: user.userId,
+          name: user.name,
+        },
+        created_at: community.created_at,
+        updated_at: community.updated_at,
+      });
     }
-  };
 
+    return res.status(200).json({
+      status: true,
+      content: {
+        meta: {
+          total: totalCommunities,
+          pages: totalPages,
+          page: page,
+        },
+        data: populatedCommunities,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching communities:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
-
-
-
-
-// exports.getAllCommunity = async (req, res) => {
-//     try {
-//       const page = parseInt(req.query.page) || 1;
-//       const perPage = parseInt(req.query.perPage) || 10;
-  
-//       const totalCommunities = await Community.countDocuments();
-//       const totalPages = Math.ceil(totalCommunities / perPage);
-  
-//       const communities = await Community.find()
-//         .populate('owner', 'id name')
-//         .skip((page - 1) * perPage)
-//         .limit(perPage)
-  
-//       const formattedCommunities = communities.map((community) => ({
-//         id: community.id,
-//         name: community.name,
-//         slug: community.slug,
-//         owner: 
-//         {
-//         //   id: community.owner.id,
-//           name: community.owner._id,
-//         },
-//         created_at: community.created_at.toISOString(),
-//         updated_at: community.updated_at.toISOString(),
-//       }));
-  
-//       return res.status(200).json({
-//         status: true,
-//         content: {
-//           meta: {
-//             total: totalCommunities,
-//             pages: totalPages,
-//             page: page,
-//           },
-//           data: formattedCommunities,
-//         },
-//       });
-//     } catch (error) {
-//       console.error("Error fetching communities:", error);
-//       return res.status(500).json({ message: "Internal Server Error" });
-//     }
-//   };
   
   
