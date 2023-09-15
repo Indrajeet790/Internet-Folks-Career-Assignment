@@ -6,10 +6,12 @@ require("dotenv").config();
 const passport=require("passport")
 const jsonWebToken=require("jsonwebtoken");
 const passportJwt=require("./config/passport-jwt")
+const bodyParser=require("body-parser")
 
 
 
-
+// Middleware
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({
 extended:true

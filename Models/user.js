@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
       // default: Snowflake.generate(), // Use Snowflake to generate a unique ID
       unique: true,
     },
-      name: {
+    name: {
         type: String,
         required: true,
       },

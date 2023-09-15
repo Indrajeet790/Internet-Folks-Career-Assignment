@@ -1,7 +1,7 @@
 const Community = require("../Models/community");
 const verifyToken = require("../config/verifyToken");
 const mongoose = require('mongoose');
-const User = require("../Models/user");
+const User = require("../Models/user")
 
 // create community
 module.exports.createCommunity = async (req, res) => {

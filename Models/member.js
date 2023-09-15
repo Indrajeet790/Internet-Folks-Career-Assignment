@@ -9,21 +9,18 @@ const memberSchema = new mongoose.Schema({
     required: true,
   },
   community: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Community',
     type: String,
+    ref: 'Community',
     required: true,
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
     type: String,
+    ref: 'User',
     unique: true,
   },
   role: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Role',
     type: String, // Assuming this is the User's Snowflake ID
+    ref: 'Role',
     required: true,
   },
   created_at: {

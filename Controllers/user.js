@@ -4,7 +4,6 @@ const bcrypt = require("../config/bcrypt");
 const mongoose = require("mongoose");
 const { Snowflake } = require("@theinternetfolks/snowflake");
 
-const ObjectId = mongoose.Types.ObjectId; // Import ObjectId from mongoose
 // register a user
 module.exports.SignUp = async (req, res) => {
   try {
@@ -27,13 +26,11 @@ module.exports.SignUp = async (req, res) => {
       // Generate a unique user ID using Snowflake
       const userId = Snowflake.generate().toString();
       console.log(userId);
-      // const userIdObjectId = new mongoose.Types.ObjectId(userId);
-      // console.log(">>>>>>>>>>>>",userIdObjectId);
       const newUser = await User.create({
         userId: userId,
         name: req.body.name,
         email: req.body.email,
-        password: hashedPassword, // Store the hashed password
+        password: hashedPassword, 
       });
 
       return res.status(200).json({ newUser });
