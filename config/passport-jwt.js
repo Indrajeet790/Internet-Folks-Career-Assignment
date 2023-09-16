@@ -23,8 +23,8 @@ passport.use(
         // If no user is found, deny access by passing 'false' to the next middleware
         return done(null, false);
       }
-    } catch (err) {
-      console.log("Error in finding user from JWT:", err);
+    } catch (error) {
+      console.log("Error in finding user from JWT:", error);
       return done(err, false);
     }
   })
