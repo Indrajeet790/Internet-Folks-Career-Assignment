@@ -69,37 +69,37 @@ module.exports.addMember = async (req, res) => {
     }
 };
 
-//  module.exports.removeMember = async (req, res) => {
-//     try {
-//         const memberId = req.params.id;
+ module.exports.removeMember = async (req, res) => {
+    try {
+        const memberId = req.params.id;
 
-//         // Check if the requesting user exists
-//         const requestingUser = await User.findById(req.userId);
-//         if (!requestingUser) {
-//             return res.status(404).json({ error: 'Requesting user not found' });
-//         }
+        // Check if the requesting user exists
+        const requestingUser = await User.findById(req.userId);
+        if (!requestingUser) {
+            return res.status(404).json({ error: 'Requesting user not found' });
+        }
 
-//         // Check if the requesting user has the privilege to remove members (e.g., Community Admin or Moderator)
-//         const requestingUserRole = await Role.findById(requestingUser.role);
-//         if (
-//             !requestingUserRole ||
-//             (requestingUserRole.name !== 'Community Admin' &&
-//                 requestingUserRole.name !== 'Moderator')
-//         ) {
-//             return res.status(403).json({ error: 'Permission denied' });
-//         }
+        // Check if the requesting user has the privilege to remove members (e.g., Community Admin or Moderator)
+        const requestingUserRole = await Role.findById(requestingUser.role);
+        if (
+            !requestingUserRole ||
+            (requestingUserRole.name !== 'Community Admin' &&
+                requestingUserRole.name !== 'Moderator')
+        ) {
+            return res.status(403).json({ error: 'Permission denied' });
+        }
 
-//         // Find and delete the member
-//         const deletedMember = await Member.findByIdAndRemove(memberId);
+        // Find and delete the member
+        const deletedMember = await Member.findByIdAndRemove(memberId);
 
-//         if (!deletedMember) {
-//             return res.status(404).json({ error: 'Member not found' });
-//         }
+        if (!deletedMember) {
+            return res.status(404).json({ error: 'Member not found' });
+        }
 
-//         res.json({ message: 'Member removed successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+        res.json({ message: 'Member removed successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
